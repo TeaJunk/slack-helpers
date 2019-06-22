@@ -16,7 +16,7 @@ const timestampHeader = "X-Slack-Request-Timestamp"
 const signatureHeader = "X-Slack-Signature"
 
 //HmacCompare takes full request from Slack slash command, secret string and optionally version (v0 currently) and compares with returing signature.
-func HmacCompare(request request, slackSigningSecret, signingVersion string) bool {
+func HmacCompare(request request, slackSigningSecret, signingVersion string) (bool, error) {
 	if signingVersion == "" {
 		signingVersion = "v0"
 	}
@@ -26,7 +26,10 @@ func HmacCompare(request request, slackSigningSecret, signingVersion string) boo
 		request.Headers[timestampHeader],
 		request.Body},
 		":")
-	requestHash.Write([]byte(requestHashData))
+	_, err := requestHash.Write([]byte(requestHashData))
+	if err != nil {
+		return false, err
+	}
 	signature := []byte(signingVersion + "=" + hex.EncodeToString(requestHash.Sum(nil)))
-	return hmac.Equal(signature, []byte(request.Headers[signatureHeader]))
+	return hmac.Equal(signature, []byte(request.Headers[signatureHeader])), nil
 }

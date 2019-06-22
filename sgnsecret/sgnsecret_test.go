@@ -11,7 +11,7 @@ func TestHmac(t *testing.T) {
 	request.Headers[timestampHeader] = "1531420618"
 	secret := "8f742231b10e8888abcd99yyyzzz85a5"
 
-	if result := HmacCompare(request, secret, ""); result != true {
-		t.Errorf("Expected boolean true, got %v\n ", result)
+	if result, err := HmacCompare(request, secret, ""); result != true || err != nil {
+		t.Errorf("Expected boolean true, got %v\n, error is %v ", result, err)
 	}
 }
