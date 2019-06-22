@@ -10,13 +10,14 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-type request events.APIGatewayProxyRequest
+// Request type is just Proxy Request type, exported for availability in other projects
+type Request events.APIGatewayProxyRequest
 
 const timestampHeader = "X-Slack-Request-Timestamp"
 const signatureHeader = "X-Slack-Signature"
 
 //HmacCompare takes full request from Slack slash command, secret string and optionally version (v0 currently) and compares with returing signature.
-func HmacCompare(request request, slackSigningSecret, signingVersion string) (bool, error) {
+func HmacCompare(request Request, slackSigningSecret, signingVersion string) (bool, error) {
 	if signingVersion == "" {
 		signingVersion = "v0"
 	}
